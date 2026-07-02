@@ -34,6 +34,7 @@ Requires PHP 8.1+ and `ext-json`. Releases follow [semantic versioning](#status)
 ## Quickstart
 
 Create API credentials in the Airwallex web app under **Developer → API keys**, then:
+(runnable versions of every snippet below live in [`examples/`](examples/))
 
 ```php
 use Airwallex\Client;
