@@ -13,6 +13,7 @@ php examples/payout_quickstart.php
 | --- | --- |
 | [payout_quickstart.php](payout_quickstart.php) | Balances → indicative rate → payout → sandbox lifecycle |
 | [fx_quote_and_convert.php](fx_quote_and_convert.php) | Indicative rate, lockable quote, executed conversion |
+| [global_accounts_and_deposits.php](global_accounts_and_deposits.php) | Collections: local receiving accounts and incoming deposits |
 | [accept_payment.php](accept_payment.php) | Payment intent → confirm → refund |
 | [issuing_quickstart.php](issuing_quickstart.php) | Cardholder → virtual card → limits and transactions |
 | [webhook_handler.php](webhook_handler.php) | Verifying and routing incoming webhooks (drop-in endpoint) |
