@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Airwallex;
 
+use Airwallex\Exception\AirwallexException;
 use Airwallex\Exception\ApiException;
 use Airwallex\Exception\ConnectionException;
 use Airwallex\Exception\RateLimitException;
@@ -90,28 +91,20 @@ final class ApiClient
 
         while (true) {
             try {
+                // The login endpoint shares this request's retry budget; its
+                // failures back off without Retry-After because the response
+                // object is not retained on exceptions (credential hygiene).
                 $token = $this->tokenManager->getToken();
             } catch (ConnectionException $exception) {
-                if ($attempt >= $this->config->maxRetries) {
-                    throw new ConnectionException(
-                        \sprintf('Login failed after %d attempt(s): %s', $attempt + 1, $exception->getMessage()),
-                        0,
-                        $exception,
-                    );
-                }
-                ($this->sleeper)(self::retryDelay($attempt, null));
+                $this->backoffOrThrow($attempt, new ConnectionException(
+                    \sprintf('Login failed after %d attempt(s): %s', $attempt + 1, $exception->getMessage()),
+                    0,
+                    $exception,
+                ));
                 ++$attempt;
                 continue;
             } catch (ServerException|RateLimitException $exception) {
-                // A transient auth-endpoint outage gets the same retry budget
-                // as any other endpoint.
-                if ($attempt >= $this->config->maxRetries) {
-                    throw $exception;
-                }
-                // The response object is not retained on exceptions
-                // (credential hygiene), so auth retries always use jittered
-                // backoff rather than Retry-After.
-                ($this->sleeper)(self::retryDelay($attempt, null));
+                $this->backoffOrThrow($attempt, $exception);
                 ++$attempt;
                 continue;
             }
@@ -121,14 +114,11 @@ final class ApiClient
             try {
                 $response = $this->http->sendRequest($request);
             } catch (ClientExceptionInterface $exception) {
-                if ($attempt >= $this->config->maxRetries) {
-                    throw new ConnectionException(
-                        \sprintf('Request failed after %d attempt(s): %s', $attempt + 1, $exception->getMessage()),
-                        0,
-                        $exception,
-                    );
-                }
-                ($this->sleeper)(self::retryDelay($attempt, null));
+                $this->backoffOrThrow($attempt, new ConnectionException(
+                    \sprintf('Request failed after %d attempt(s): %s', $attempt + 1, $exception->getMessage()),
+                    0,
+                    $exception,
+                ));
                 ++$attempt;
                 continue;
             }
@@ -155,6 +145,20 @@ final class ApiClient
 
             return self::parseBody($response);
         }
+    }
+
+    /**
+     * Throw $failure when the retry budget is exhausted; otherwise sleep the
+     * jittered backoff delay so the caller can start the next attempt.
+     *
+     * @throws AirwallexException
+     */
+    private function backoffOrThrow(int $attempt, AirwallexException $failure): void
+    {
+        if ($attempt >= $this->config->maxRetries) {
+            throw $failure;
+        }
+        ($this->sleeper)(self::retryDelay($attempt, null));
     }
 
     /**
