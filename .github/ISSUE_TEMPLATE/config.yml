@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/Cyvid7-Darus10/airwallex-php/security/advisories/new
+    about: Please report security issues privately, never as public issues.
+  - name: Airwallex API questions
+    url: https://www.airwallex.com/docs/api
+    about: Questions about the API itself belong to Airwallex support, not this unofficial SDK.
