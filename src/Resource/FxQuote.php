@@ -7,9 +7,14 @@ namespace Airwallex\Resource;
 use Airwallex\AirwallexObject;
 
 /**
- * A lockable FX quote; pass its id when executing a conversion to trade at exactly the quoted rate.
+ * A lockable FX quote; pass its quote_id when executing a conversion to trade
+ * at exactly the quoted rate.
  *
- * @property-read string|null $id
+ * @property-read string|null $quote_id id under current API versions
+ * @property-read string|null $id id under older API versions
+ * @property-read string|null $usage e.g. MULTI_USE
+ * @property-read string|null $valid_from_at
+ * @property-read string|null $valid_to_at
  * @property-read string|null $request_id
  * @property-read string|null $status
  * @property-read string|null $currency_pair

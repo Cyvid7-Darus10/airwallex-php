@@ -114,6 +114,8 @@ final class ServicesTest extends TestCase
 
         $request = $this->call(fn (Client $c) => $c->transfers->validate(['beneficiary_id' => 'ben_1']));
         self::assertSame('/api/v1/transfers/validate', $request->getUri()->getPath());
+        // Live API requires request_id in the validation payload too.
+        self::assertArrayHasKey('request_id', self::bodyOf($request));
 
         $request = $this->call(fn (Client $c) => $c->transfers->confirmFunding('tra_1', ['funding_source_id' => 'fs_1']));
         self::assertSame('/api/v1/transfers/tra_1/confirm_funding', $request->getUri()->getPath());
@@ -147,7 +149,7 @@ final class ServicesTest extends TestCase
         $request = $this->call(fn (Client $c) => $c->batchTransfers->items('bat_1'), ['has_more' => false, 'items' => []]);
         self::assertSame('/api/v1/batch_transfers/bat_1/items', $request->getUri()->getPath());
 
-        $request = $this->call(fn (Client $c) => $c->batchTransfers->quote('bat_1', ['validity' => '1_HOUR']));
+        $request = $this->call(fn (Client $c) => $c->batchTransfers->quote('bat_1', ['validity' => 'HR_1']));
         self::assertSame('/api/v1/batch_transfers/bat_1/quote', $request->getUri()->getPath());
 
         $request = $this->call(fn (Client $c) => $c->batchTransfers->submit('bat_1'));
@@ -230,19 +232,19 @@ final class ServicesTest extends TestCase
         // Modern indicative-rates endpoint — NOT the legacy /rates/quote.
         $request = $this->call(
             fn (Client $c) => $c->rates->current(buyCurrency: 'USD', sellCurrency: 'SGD', buyAmount: 1000),
-            ['currency_pair' => 'USDSGD', 'client_rate' => 1.34],
+            ['currency_pair' => 'USDSGD', 'rate' => 1.34],
         );
         self::assertSame('GET', $request->getMethod());
         self::assertSame('/api/v1/fx/rates/current', $request->getUri()->getPath());
         parse_str($request->getUri()->getQuery(), $query);
         self::assertSame(['buy_currency' => 'USD', 'sell_currency' => 'SGD', 'buy_amount' => '1000'], $query);
         $this->assertResult(RateQuote::class);
-        self::assertSame(1.34, $this->assertResult(RateQuote::class)->client_rate);
+        self::assertSame(1.34, $this->assertResult(RateQuote::class)->rate);
     }
 
     public function testFxQuotes(): void
     {
-        $request = $this->call(fn (Client $c) => $c->fxQuotes->create(['buy_currency' => 'USD', 'validity' => '1_HOUR']));
+        $request = $this->call(fn (Client $c) => $c->fxQuotes->create(['buy_currency' => 'USD', 'validity' => 'HR_1']));
         self::assertSame('/api/v1/fx/quotes/create', $request->getUri()->getPath());
         $this->assertResult(FxQuote::class);
 

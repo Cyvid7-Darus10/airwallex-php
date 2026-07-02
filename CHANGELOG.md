@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-07-02
+
+Fixes from a live smoke test against the Airwallex demo environment.
+
+### Fixed
+
+- `transfers->validate()` now auto-generates a `request_id` — the live API requires it in the validation payload (it mirrors the create body).
+- FX quote `validity` examples corrected to the real enum (`MIN_1`, `MIN_15`, `MIN_30`, `HR_1`, `HR_4`, `HR_8`, `HR_24`); `1_HOUR` was rejected by the API.
+- `RateQuote` documents the `rate` field returned by current API versions (plus `buy_currency`/`sell_currency`/`conversion_date`/`created_at`); README and example no longer read the legacy `client_rate` field.
+- `FxQuote` documents `quote_id` (the id under current API versions), `usage`, `valid_from_at`, and `valid_to_at`.
+
+### Changed
+
+- `request()` retry loop refactored (`backoffOrThrow`); no behavior change.
+
 ## [0.1.0] - 2026-07-02
 
 ### Added
@@ -22,5 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Credential hygiene: API keys and bearer tokens are redacted from `var_dump()`, serialized state, and exception payloads; custom base URLs must use HTTPS (plain HTTP allowed only for localhost).
 - PSR-18 client injection; the injected client is never mutated or closed.
 
-[Unreleased]: https://github.com/Cyvid7-Darus10/airwallex-php/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/Cyvid7-Darus10/airwallex-php/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/Cyvid7-Darus10/airwallex-php/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Cyvid7-Darus10/airwallex-php/releases/tag/v0.1.0

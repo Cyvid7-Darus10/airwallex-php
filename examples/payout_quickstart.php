@@ -25,7 +25,7 @@ foreach ($client->balances->current() as $balance) {
 
 // 2. Indicative FX rate (no funds move)
 $rate = $client->rates->current(buyCurrency: 'USD', sellCurrency: 'SGD', buyAmount: 1000);
-printf("USD/SGD client rate: %s\n", (string) $rate->client_rate);
+printf("USD/SGD client rate: %s\n", (string) $rate->rate);
 
 // 3. Create and settle a payout
 try {

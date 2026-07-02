@@ -74,7 +74,7 @@ use Psr\Http\Client\ClientInterface;
  */
 class Client
 {
-    public const VERSION = '0.1.0';
+    public const VERSION = '0.1.1';
 
     /**
      * @var array<string, class-string<AbstractService>>

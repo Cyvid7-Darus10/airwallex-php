@@ -96,13 +96,15 @@ final class TransfersService extends AbstractService
     /**
      * Validate a transfer payload without creating it.
      *
-     * Returns the raw validation result from Airwallex.
+     * The API requires a request_id in the validation payload (it mirrors the
+     * create body); one is generated automatically when not supplied. Returns
+     * the raw validation result from Airwallex.
      *
      * @param array<string, mixed> $params
      */
     public function validate(array $params): mixed
     {
-        return $this->client->post(self::BASE . '/validate', $params);
+        return $this->client->post(self::BASE . '/validate', Util::ensureRequestId($params));
     }
 
     /**

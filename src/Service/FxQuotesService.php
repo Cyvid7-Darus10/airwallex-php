@@ -29,7 +29,7 @@ final class FxQuotesService extends AbstractService
      *         'buy_currency' => 'USD',
      *         'sell_currency' => 'SGD',
      *         'buy_amount' => 1000,
-     *         'validity' => '1_HOUR',
+     *         'validity' => 'HR_1',
      *     ]);
      *
      * @param array<string, mixed> $params

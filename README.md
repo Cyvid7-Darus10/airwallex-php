@@ -74,7 +74,7 @@ echo $transfer->id, ' ', $transfer->status;
 
 ```php
 $rate = $client->rates->current(buyCurrency: 'USD', sellCurrency: 'SGD', buyAmount: 1000);
-echo $rate->client_rate;
+echo $rate->rate;   // indicative client rate; breakdown in $rate->rate_details
 
 $conversion = $client->conversions->create([
     'buy_currency' => 'USD',
@@ -91,7 +91,7 @@ $quote = $client->fxQuotes->create([
     'buy_currency' => 'USD',
     'sell_currency' => 'SGD',
     'buy_amount' => 1000,
-    'validity' => '1_HOUR',
+    'validity' => 'HR_1',   // MIN_1|MIN_15|MIN_30|HR_1|HR_4|HR_8|HR_24
 ]);
 ```
 
