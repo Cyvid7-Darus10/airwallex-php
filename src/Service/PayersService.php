@@ -72,7 +72,7 @@ final class PayersService extends AbstractService
     public function update(string $payerId, array $params): Payer
     {
         return Payer::make($this->client->post(
-            self::BASE . '/update/' . Util::encodePathParam($payerId),
+            self::BASE . '/' . Util::encodePathParam($payerId) . '/update',
             $params,
         ));
     }
@@ -82,7 +82,7 @@ final class PayersService extends AbstractService
      */
     public function delete(string $payerId): void
     {
-        $this->client->post(self::BASE . '/delete/' . Util::encodePathParam($payerId));
+        $this->client->post(self::BASE . '/' . Util::encodePathParam($payerId) . '/delete');
     }
 
     /**

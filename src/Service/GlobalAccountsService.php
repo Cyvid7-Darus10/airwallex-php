@@ -76,7 +76,7 @@ final class GlobalAccountsService extends AbstractService
     public function update(string $globalAccountId, array $params): GlobalAccount
     {
         return GlobalAccount::make($this->client->post(
-            self::BASE . '/update/' . Util::encodePathParam($globalAccountId),
+            self::BASE . '/' . Util::encodePathParam($globalAccountId) . '/update',
             $params,
         ));
     }

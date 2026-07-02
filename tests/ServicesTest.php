@@ -186,10 +186,10 @@ final class ServicesTest extends TestCase
         self::assertSame('/api/v1/beneficiaries/create', $request->getUri()->getPath());
 
         $request = $this->call(fn (Client $c) => $c->beneficiaries->update('ben_1', ['nickname' => 'n']));
-        self::assertSame('/api/v1/beneficiaries/update/ben_1', $request->getUri()->getPath());
+        self::assertSame('/api/v1/beneficiaries/ben_1/update', $request->getUri()->getPath());
 
         $request = $this->call(fn (Client $c) => $c->beneficiaries->delete('ben_1'));
-        self::assertSame('/api/v1/beneficiaries/delete/ben_1', $request->getUri()->getPath());
+        self::assertSame('/api/v1/beneficiaries/ben_1/delete', $request->getUri()->getPath());
 
         $request = $this->call(fn (Client $c) => $c->beneficiaries->validate(['beneficiary' => []]));
         self::assertSame('/api/v1/beneficiaries/validate', $request->getUri()->getPath());
@@ -207,10 +207,10 @@ final class ServicesTest extends TestCase
         self::assertSame('/api/v1/payers/create', $request->getUri()->getPath());
 
         $request = $this->call(fn (Client $c) => $c->payers->update('pay_1', ['nickname' => 'n']));
-        self::assertSame('/api/v1/payers/update/pay_1', $request->getUri()->getPath());
+        self::assertSame('/api/v1/payers/pay_1/update', $request->getUri()->getPath());
 
         $request = $this->call(fn (Client $c) => $c->payers->delete('pay_1'));
-        self::assertSame('/api/v1/payers/delete/pay_1', $request->getUri()->getPath());
+        self::assertSame('/api/v1/payers/pay_1/delete', $request->getUri()->getPath());
 
         $request = $this->call(fn (Client $c) => $c->payers->validate(['payer' => []]));
         self::assertSame('/api/v1/payers/validate', $request->getUri()->getPath());
@@ -219,14 +219,14 @@ final class ServicesTest extends TestCase
     public function testConversionsAndRates(): void
     {
         $request = $this->call(fn (Client $c) => $c->conversions->list(buyCurrency: 'USD'), ['has_more' => false, 'items' => []]);
-        self::assertSame('/api/v1/conversions', $request->getUri()->getPath());
+        self::assertSame('/api/v1/fx/conversions', $request->getUri()->getPath());
 
         $request = $this->call(fn (Client $c) => $c->conversions->retrieve('con_1'));
-        self::assertSame('/api/v1/conversions/con_1', $request->getUri()->getPath());
+        self::assertSame('/api/v1/fx/conversions/con_1', $request->getUri()->getPath());
         $this->assertResult(Conversion::class);
 
         $request = $this->call(fn (Client $c) => $c->conversions->create(['buy_currency' => 'USD', 'term_agreement' => true]));
-        self::assertSame('/api/v1/conversions/create', $request->getUri()->getPath());
+        self::assertSame('/api/v1/fx/conversions/create', $request->getUri()->getPath());
         self::assertTrue(self::bodyOf($request)['term_agreement']);
 
         // Modern indicative-rates endpoint — NOT the legacy /rates/quote.
@@ -255,19 +255,19 @@ final class ServicesTest extends TestCase
     public function testConversionAmendments(): void
     {
         $request = $this->call(fn (Client $c) => $c->conversionAmendments->list(conversionId: 'con_1'), ['has_more' => false, 'items' => []]);
-        self::assertSame('/api/v1/conversion_amendments', $request->getUri()->getPath());
+        self::assertSame('/api/v1/fx/conversion_amendments', $request->getUri()->getPath());
         parse_str($request->getUri()->getQuery(), $query);
         self::assertSame('con_1', $query['conversion_id']);
 
         $request = $this->call(fn (Client $c) => $c->conversionAmendments->retrieve('am_1'));
-        self::assertSame('/api/v1/conversion_amendments/am_1', $request->getUri()->getPath());
+        self::assertSame('/api/v1/fx/conversion_amendments/am_1', $request->getUri()->getPath());
         $this->assertResult(ConversionAmendment::class);
 
-        $request = $this->call(fn (Client $c) => $c->conversionAmendments->create(['conversion_id' => 'con_1', 'type' => 'CANCELLATION']));
-        self::assertSame('/api/v1/conversion_amendments/create', $request->getUri()->getPath());
+        $request = $this->call(fn (Client $c) => $c->conversionAmendments->create(['conversion_id' => 'con_1', 'type' => 'CANCEL']));
+        self::assertSame('/api/v1/fx/conversion_amendments/create', $request->getUri()->getPath());
 
-        $request = $this->call(fn (Client $c) => $c->conversionAmendments->quote(['conversion_id' => 'con_1', 'type' => 'CANCELLATION']));
-        self::assertSame('/api/v1/conversion_amendments/quote', $request->getUri()->getPath());
+        $request = $this->call(fn (Client $c) => $c->conversionAmendments->quote(['conversion_id' => 'con_1', 'type' => 'CANCEL']));
+        self::assertSame('/api/v1/fx/conversion_amendments/quote', $request->getUri()->getPath());
         $this->assertResult(ConversionAmendmentQuote::class);
         self::assertArrayHasKey('request_id', self::bodyOf($request));
     }
@@ -285,7 +285,7 @@ final class ServicesTest extends TestCase
         self::assertSame('/api/v1/global_accounts/create', $request->getUri()->getPath());
 
         $request = $this->call(fn (Client $c) => $c->globalAccounts->update('ga_1', ['nick_name' => 'ops']));
-        self::assertSame('/api/v1/global_accounts/update/ga_1', $request->getUri()->getPath());
+        self::assertSame('/api/v1/global_accounts/ga_1/update', $request->getUri()->getPath());
 
         $request = $this->call(fn (Client $c) => $c->globalAccounts->close('ga_1'));
         self::assertSame('/api/v1/global_accounts/ga_1/close', $request->getUri()->getPath());
@@ -465,11 +465,12 @@ final class ServicesTest extends TestCase
         self::assertSame('/api/v1/webhooks/hook_1', $request->getUri()->getPath());
         $this->assertResult(WebhookEndpoint::class);
 
-        $request = $this->call(fn (Client $c) => $c->webhookEndpoints->create('https://example.com/hook', ['transfer.settled']));
+        $request = $this->call(fn (Client $c) => $c->webhookEndpoints->create('https://example.com/hook', ['transfer.settled'], version: '2022-11-11'));
         self::assertSame('/api/v1/webhooks/create', $request->getUri()->getPath());
         $body = self::bodyOf($request);
         self::assertSame('https://example.com/hook', $body['url']);
         self::assertSame(['transfer.settled'], $body['events']);
+        self::assertSame('2022-11-11', $body['version']);
         self::assertArrayHasKey('request_id', $body);
 
         $request = $this->call(fn (Client $c) => $c->webhookEndpoints->update('hook_1', ['events' => ['transfer.failed']]));

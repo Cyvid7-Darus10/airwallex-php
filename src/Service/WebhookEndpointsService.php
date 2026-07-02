@@ -46,14 +46,20 @@ final class WebhookEndpointsService extends AbstractService
     /**
      * Register a webhook endpoint for the given event names.
      *
+     * $version pins the API version that controls the event payload
+     * structure (YYYY-MM-DD); the API requires it.
+     *
      * @param list<string> $events
      * @param array<string, mixed> $params
      */
-    public function create(string $url, array $events, array $params = []): WebhookEndpoint
+    public function create(string $url, array $events, ?string $version = null, array $params = []): WebhookEndpoint
     {
         return WebhookEndpoint::make($this->client->post(
             self::BASE . '/create',
-            Util::ensureRequestId(array_merge(['url' => $url, 'events' => $events], $params)),
+            Util::ensureRequestId(array_merge(
+                Util::cleanParams(['url' => $url, 'events' => $events, 'version' => $version]),
+                $params,
+            )),
         ));
     }
 

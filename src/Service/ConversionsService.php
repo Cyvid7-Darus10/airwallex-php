@@ -13,7 +13,7 @@ use Airwallex\Util;
  */
 final class ConversionsService extends AbstractService
 {
-    private const BASE = '/api/v1/conversions';
+    private const BASE = '/api/v1/fx/conversions';
 
     /**
      * List FX conversions.

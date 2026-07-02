@@ -14,7 +14,7 @@ use Airwallex\Util;
  */
 final class ConversionAmendmentsService extends AbstractService
 {
-    private const BASE = '/api/v1/conversion_amendments';
+    private const BASE = '/api/v1/fx/conversion_amendments';
 
     /**
      * List the amendments applied to a conversion.
@@ -55,7 +55,7 @@ final class ConversionAmendmentsService extends AbstractService
      *
      *     $client->conversionAmendments->create([
      *         'conversion_id' => 'con_123',
-     *         'type' => 'CANCELLATION',
+     *         'type' => 'CANCEL',
      *     ]);
      *
      * @param array<string, mixed> $params

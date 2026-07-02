@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-07-02
+
+Route corrections from deeper live testing (full CRUD lifecycles against the
+demo environment) and cross-verification with the official Airwallex Node SDK.
+The legacy shapes below 404 or fail on current API versions.
+
+### Fixed
+
+- Conversions live under `/api/v1/fx/conversions` (create/retrieve/list) and
+  conversion amendments under `/api/v1/fx/conversion_amendments`; the legacy
+  un-prefixed routes reject current API versions with `incorrect_version`.
+- Beneficiary, payer, and global-account updates/deletes use the modern
+  `/{id}/update` and `/{id}/delete` shape instead of the legacy
+  `/update/{id}` / `/delete/{id}` (which 404 for current resources).
+- `webhookEndpoints->create()` accepts the required `version` parameter
+  (YYYY-MM-DD, controls the event payload structure).
+- Conversion amendment type is `CANCEL` (docs said `CANCELLATION`, rejected
+  by the API).
+- `Beneficiary` documents `id` / `transfer_methods` (current API versions)
+  alongside the legacy `beneficiary_id` / `payment_methods`.
+
 ## [0.1.1] - 2026-07-02
 
 Fixes from a live smoke test against the Airwallex demo environment.
@@ -37,6 +58,7 @@ Fixes from a live smoke test against the Airwallex demo environment.
 - Credential hygiene: API keys and bearer tokens are redacted from `var_dump()`, serialized state, and exception payloads; custom base URLs must use HTTPS (plain HTTP allowed only for localhost).
 - PSR-18 client injection; the injected client is never mutated or closed.
 
-[Unreleased]: https://github.com/Cyvid7-Darus10/airwallex-php/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/Cyvid7-Darus10/airwallex-php/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/Cyvid7-Darus10/airwallex-php/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Cyvid7-Darus10/airwallex-php/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Cyvid7-Darus10/airwallex-php/releases/tag/v0.1.0

@@ -78,7 +78,7 @@ final class BeneficiariesService extends AbstractService
     public function update(string $beneficiaryId, array $params): Beneficiary
     {
         return Beneficiary::make($this->client->post(
-            self::BASE . '/update/' . Util::encodePathParam($beneficiaryId),
+            self::BASE . '/' . Util::encodePathParam($beneficiaryId) . '/update',
             $params,
         ));
     }
@@ -88,7 +88,7 @@ final class BeneficiariesService extends AbstractService
      */
     public function delete(string $beneficiaryId): void
     {
-        $this->client->post(self::BASE . '/delete/' . Util::encodePathParam($beneficiaryId));
+        $this->client->post(self::BASE . '/' . Util::encodePathParam($beneficiaryId) . '/delete');
     }
 
     /**
