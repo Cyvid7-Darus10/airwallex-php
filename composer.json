@@ -1,0 +1,62 @@
+{
+    "name": "pastelero/airwallex",
+    "description": "Unofficial PHP SDK for the Airwallex API — payouts, FX, global accounts, payments, issuing, and webhooks. Not affiliated with Airwallex.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "airwallex",
+        "payments",
+        "payouts",
+        "fx",
+        "fintech",
+        "api",
+        "sdk"
+    ],
+    "authors": [
+        {
+            "name": "Cyrus David Pastelero",
+            "email": "cyrus@pastelero.ph"
+        }
+    ],
+    "homepage": "https://github.com/Cyvid7-Darus10/airwallex-php",
+    "support": {
+        "issues": "https://github.com/Cyvid7-Darus10/airwallex-php/issues",
+        "source": "https://github.com/Cyvid7-Darus10/airwallex-php"
+    },
+    "require": {
+        "php": ">=8.1",
+        "ext-json": "*",
+        "guzzlehttp/guzzle": "^7.8",
+        "guzzlehttp/psr7": "^2.6",
+        "psr/http-client": "^1.0",
+        "psr/http-message": "^1.1 || ^2.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.64",
+        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpunit/phpunit": "^10.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Airwallex\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Airwallex\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "cs": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix --dry-run --diff",
+        "cs:fix": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix",
+        "stan": "phpstan analyse --memory-limit=1G",
+        "test": "phpunit",
+        "test:coverage": "phpunit --coverage-text --coverage-clover coverage.xml"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
